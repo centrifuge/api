@@ -122,12 +122,16 @@ async function _handleEthBlock(block: EthereumBlock): Promise<void> {
   }
 
   //Execute available calls
-  const callResults: PoolMulticall[] = await processCalls(poolUpdateCalls).catch((err) => {
-    logger.error(`poolUpdateCalls failed: ${err}`)
-    return []
-  })
+  const callResults: PoolMulticall[] = await processCalls(poolUpdateCalls)
 
   for (const callResult of callResults) {
+    if (callResult.result === '' || callResult.result === '0x') {
+      logger.warn(
+        `Missing call result: ${callResult.type} for pool ${callResult.id} ` +
+          `queried from contract ${callResult.call.target}`
+      )
+      continue
+    }
     logger.info(
       `Processing callResult: ${callResult.type} for pool ${callResult.id} to address ${callResult.call.target}`
     )
@@ -503,34 +507,48 @@ function chunkArray<T>(array: T[], chunkSize: number): T[][] {
   return result
 }
 
-async function processCalls(callsArray: PoolMulticall[], chunkSize = 30): Promise<PoolMulticall[]> {
-  if (callsArray.length === 0) return []
-  const callChunks = chunkArray(callsArray, chunkSize)
-  for (const [i, chunk] of callChunks.entries()) {
-    const multicall = MulticallAbi__factory.connect(multicallAddress, api as Provider)
-    let results: [BigNumber, string[]] & {
-      blockNumber: BigNumber
-      returnData: string[]
-    }
+async function processCalls(calls: PoolMulticall[], batchSize = 30): Promise<PoolMulticall[]> {
+  if (calls.length === 0) return []
+
+  const callBatches = chunkArray(calls, batchSize)
+  const results: PoolMulticall[] = []
+
+  for (const [i, callBatch] of callBatches.entries()) {
+    logger.info(
+      `Processing Multicall batch ${i + 1} of ${callBatches.length} ` +
+        `with size ${callBatch.length} to address ${multicallAddress}...`
+    )
     try {
-      const calls = chunk.map((call) => call.call)
-      results = await multicall.callStatic.aggregate(calls)
-      const [_blocknumber, returnData] = results
-      returnData.forEach((result, j) => (callsArray[i * chunkSize + j].result = result))
+      const multicall = MulticallAbi__factory.connect(multicallAddress, api as Provider)
+      const [_blockNumber, returnData] = await multicall.callStatic.aggregate(callBatch.map((call) => call.call))
+
+      // Process successful results
+      returnData.forEach((result, j) => {
+        const callIndex = i * batchSize + j
+        if (callIndex < calls.length) {
+          const updatedCall = { ...calls[callIndex], result }
+          results.push(updatedCall)
+        }
+      })
     } catch (e) {
-      logger.error(`Error fetching chunk ${i}: ${e}`)
+      logger.error(`Error calling Multicall batch ${i + 1}: ${e}`)
+
+      // Add failed calls to results with empty result
+      callBatch.forEach((call) => {
+        results.push({ ...call, result: '' })
+      })
     }
   }
-  return callsArray
+  return results
 }
 
 function decodeCall<T extends Interface>(abiInterface: T, functionFragment: string, data: BytesLike) {
   try {
     const decodedCall = abiInterface.decodeFunctionResult(functionFragment, data)
     return decodedCall
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  } catch (err: any) {
-    logger.error(`Failed to decode interface call ${functionFragment}: ${err.errorName}`)
+  } catch (err) {
+    const { message } = err as Error
+    logger.error(`Failed to decode interface call ${functionFragment}: ${message}`)
     return undefined
   }
 }
