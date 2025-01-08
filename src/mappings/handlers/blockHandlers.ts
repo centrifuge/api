@@ -25,9 +25,9 @@ async function _handleBlock(block: SubstrateBlock): Promise<void> {
 
   const blockPeriodStart = getPeriodStart(block.timestamp)
   const blockNumber = block.block.header.number.toNumber()
-  const newPeriod = (await timekeeper).processBlock(block.timestamp)
+  const isNewPeriod = (await timekeeper).processBlock(block.timestamp)
 
-  if (!newPeriod) return
+  if (!isNewPeriod) return
 
   const specVersion = api.runtimeVersion.specVersion.toNumber()
   logger.info(

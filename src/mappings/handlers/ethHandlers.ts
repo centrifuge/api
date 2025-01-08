@@ -49,6 +49,7 @@ async function _handleEthBlock(block: EthereumBlock): Promise<void> {
 
   for (const tinlakePool of tinlakePools) {
     if (blockNumber < tinlakePool.startBlock) continue
+    logger.info(`Preparing pool update calls for pool ${tinlakePool.id}`)
     const pool = await PoolService.getOrSeed(tinlakePool.id, false, false, blockchain.id)
     const latestNavFeed = getLatestContract(tinlakePool.navFeed, blockNumber)
     const latestReserve = getLatestContract(tinlakePool.reserve, blockNumber)
@@ -71,6 +72,7 @@ async function _handleEthBlock(block: EthereumBlock): Promise<void> {
 
     //Append navFeed Call for pool
     if (latestNavFeed && latestNavFeed.address) {
+      logger.info(`Appending navFeed Call for pool ${pool.id} to address ${latestNavFeed.address}`)
       poolUpdateCalls.push({
         id: pool.id,
         type: 'currentNAV',
@@ -83,6 +85,7 @@ async function _handleEthBlock(block: EthereumBlock): Promise<void> {
     }
     //Append totalBalance Call for pool
     if (latestReserve && latestReserve.address) {
+      logger.info(`Appending totalBalance Call for pool ${pool.id} to address ${latestReserve.address}`)
       poolUpdateCalls.push({
         id: pool.id,
         type: 'totalBalance',
@@ -95,6 +98,7 @@ async function _handleEthBlock(block: EthereumBlock): Promise<void> {
     }
     //Append token price calls for pool
     if (latestAssessor && latestAssessor.address) {
+      logger.info(`Appending token price calls for pool ${pool.id} to address ${latestAssessor.address}`)
       poolUpdateCalls.push({
         id: tinlakePool.id,
         type: 'calcSeniorTokenPrice',
@@ -124,6 +128,9 @@ async function _handleEthBlock(block: EthereumBlock): Promise<void> {
   })
 
   for (const callResult of callResults) {
+    logger.info(
+      `Processing callResult: ${callResult.type} for pool ${callResult.id} to address ${callResult.call.target}`
+    )
     const { pool, tinlakePool } = processedPools[callResult.id]
     const isClosedPool = pool.id === ALT_1_POOL_ID && blockNumber > ALT_1_END_BLOCK
     switch (callResult.type) {
@@ -154,7 +161,7 @@ async function _handleEthBlock(block: EthereumBlock): Promise<void> {
           break
         }
         const reserveInterface = ReserveAbi__factory.createInterface()
-        const decodedTotalBalance = decodeCall(reserveInterface,'totalBalance', callResult.result)
+        const decodedTotalBalance = decodeCall(reserveInterface, 'totalBalance', callResult.result)
         if (!decodedTotalBalance) break
         const totalBalance = decodedTotalBalance[0].toBigInt()
         pool.setTotalReserve(totalBalance)
@@ -164,7 +171,7 @@ async function _handleEthBlock(block: EthereumBlock): Promise<void> {
       }
       case 'calcSeniorTokenPrice': {
         const assessorInterface = AssessorAbi__factory.createInterface()
-        const decodedSeniorPrice = decodeCall(assessorInterface,'calcSeniorTokenPrice', callResult.result)
+        const decodedSeniorPrice = decodeCall(assessorInterface, 'calcSeniorTokenPrice', callResult.result)
         if (!decodedSeniorPrice) break
         const seniorPrice = decodedSeniorPrice[0].toBigInt()
         const senior = await TrancheService.getOrSeed(tinlakePool.id, 'senior', blockchain.id)
@@ -174,7 +181,7 @@ async function _handleEthBlock(block: EthereumBlock): Promise<void> {
       }
       case 'calcJuniorTokenPrice': {
         const assessorInterface = AssessorAbi__factory.createInterface()
-        const decodedJuniorPrice = decodeCall(assessorInterface,'calcJuniorTokenPrice', callResult.result)
+        const decodedJuniorPrice = decodeCall(assessorInterface, 'calcJuniorTokenPrice', callResult.result)
         if (!decodedJuniorPrice) break
         const juniorPrice = decodedJuniorPrice[0].toBigInt()
         const junior = await TrancheService.getOrSeed(tinlakePool.id, 'junior', blockchain.id)
