@@ -133,10 +133,17 @@ export const tinlakePools = [
     shortName: 'New Silver 2',
     startBlock: 11288849,
     navFeed: [{ address: '0x41fad1eb242de19da0206b0468763333bb6c2b3d', startBlock: 11288866 }],
-    reserve: [{ address: '0x1f5fa2e665609ce4953c65ce532ac8b47ec97cd5', startBlock: 12702995 }],
+    reserve: [
+      { address: '0x30FDE788c346aBDdb564110293B20A13cF1464B6', startBlock: 11288965 },
+      { address: '0xD9E4391cF31638a8Da718Ff0Bf69249Cdc48fB2B', startBlock: 12283004 },
+      { address: '0x1f5Fa2E665609CE4953C65CE532Ac8B47EC97cD5', startBlock: 12702995 },
+    ],
     shelf: [{ address: '0x7d057A056939bb96D682336683C10EC89b78D7CE' }],
     pile: [{ address: '0x3eC5c16E7f2C6A80E31997C68D8Fa6ACe089807f' }],
-    assessor: [{ address: '0x29BB673054b6Fd268d73af5D676f150C91bd63af' }],
+    assessor: [
+      { address: '0xdA0bA5Dd06C8BaeC53Fa8ae25Ad4f19088D6375b', startBlock: 11288969 },
+      { address: '0x83E2369A33104120746B589Cc90180ed776fFb91', startBlock: 12282961 },
+    ],
     seniorInterestRate: '1000000001585489599188229325',
   },
   {
