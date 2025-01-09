@@ -6,7 +6,7 @@ export class SnapshotPeriodService extends SnapshotPeriod {
     const weekday = periodStart.getUTCDay()
     const month = periodStart.getUTCMonth()
     const year = periodStart.getUTCFullYear()
-    logger.info(`Initialising new SnapshotPeriod with Id ${chainId}`)
+    logger.info(`Initialising new SnapshotPeriod with id ${id}`)
     return new this(id,periodStart,day,weekday,month,year)
   }
 }
