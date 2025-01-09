@@ -144,3 +144,5 @@ src/types
 *-cid
 
 .envrc
+
+**/*.sql.gz
