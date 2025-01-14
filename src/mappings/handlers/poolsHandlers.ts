@@ -160,7 +160,13 @@ async function _handleEpochClosed(event: SubstrateEvent<EpochClosedExecutedEvent
   const tranches = await TrancheService.getActivesByPoolId(poolId.toString())
   const epoch = await EpochService.getById(poolId.toString(), epochId.toNumber())
   if (!epoch) throw new Error(`Epoch ${epochId.toString(10)} not found for pool ${poolId.toString(10)}`)
-  await epoch.closeEpoch(timestamp)
+  await epoch.closeEpoch(
+    timestamp,
+    pool.netAssetValue,
+    pool.totalReserve,
+    pool.offchainCashValue,
+    pool.portfolioValuation
+  )
   await epoch.saveWithStates()
 
   const trancheIds = tranches.map((tranche) => tranche.trancheId)

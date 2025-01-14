@@ -28,6 +28,11 @@ export class EpochService extends Epoch {
     epoch.sumRedeemedAmount = BigInt(0)
     epoch.sumPoolFeesPaidAmount = BigInt(0)
 
+    epoch.netAssetValue = BigInt(0)
+    epoch.totalReserve = BigInt(0)
+    epoch.offchainCashValue = BigInt(0)
+    epoch.portfolioValuation = BigInt(0)
+
     epoch.states = trancheIds.map((trancheId) => {
       const epochState = new EpochState(`${poolId}-${epochNr}-${trancheId}`, epoch.id, trancheId)
       epochState.sumOutstandingInvestOrders = BigInt(0)
@@ -59,9 +64,20 @@ export class EpochService extends Epoch {
     return [...this.states]
   }
 
-  public closeEpoch(timestamp: Date) {
+  public closeEpoch(
+    timestamp: Date,
+    netAssetValue: bigint,
+    totalReserve: bigint,
+    offchainCashValue: bigint,
+    portfolioValuation: bigint
+  ) {
     logger.info(`Closing epoch ${this.id} on ${timestamp}`)
     this.closedAt = timestamp
+
+    this.netAssetValue = netAssetValue
+    this.totalReserve = totalReserve
+    this.offchainCashValue = offchainCashValue
+    this.portfolioValuation = portfolioValuation
   }
 
   public async executeEpoch(timestamp: Date) {

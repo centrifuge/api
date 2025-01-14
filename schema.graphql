@@ -251,6 +251,12 @@ type Epoch @entity {
   closedAt: Date
   executedAt: Date
 
+  # NAV == totalReserve + offchainCashValue + portfolioValuation - sumPoolFeesPendingAmount
+  netAssetValue: BigInt # previously: portfolioValuation
+  totalReserve: BigInt
+  offchainCashValue: BigInt # previously: cashAssetValue
+  portfolioValuation: BigInt
+
   # Aggregated data during this epoch
   sumBorrowedAmount: BigInt
   sumRepaidAmount: BigInt
