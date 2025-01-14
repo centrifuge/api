@@ -66,10 +66,10 @@ export class EpochService extends Epoch {
 
   public closeEpoch(
     timestamp: Date,
-    netAssetValue: bigint,
-    totalReserve: bigint,
-    offchainCashValue: bigint,
-    portfolioValuation: bigint
+    netAssetValue: bigint | undefined,
+    totalReserve: bigint | undefined,
+    offchainCashValue: bigint | undefined,
+    portfolioValuation: bigint | undefined
   ) {
     logger.info(`Closing epoch ${this.id} on ${timestamp}`)
     this.closedAt = timestamp
