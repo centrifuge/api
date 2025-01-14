@@ -96,6 +96,7 @@ export const tinlakePools = [
     startBlock: 11282587,
     navFeed: [
       { address: '0xcAB9ed8e5EF4607A97f4e22Ad1D984ADB93ce890', startBlock: 11282611 },
+      { address: null, startBlock: 16537499 },
       { address: '0x887db3ee1166ddaf5f7df96b195912594112431e', startBlock: 16799275 },
     ],
     reserve: [

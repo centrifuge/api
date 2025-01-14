@@ -71,7 +71,7 @@ async function _handleEthBlock(block: EthereumBlock): Promise<void> {
     }
 
     //Append navFeed Call for pool
-    if (latestNavFeed && latestNavFeed.address) {
+    if (latestNavFeed && !!latestNavFeed.address) {
       logger.info(`Appending navFeed Call for pool ${pool.id} to address ${latestNavFeed.address}`)
       poolUpdateCalls.push({
         id: pool.id,
@@ -496,7 +496,7 @@ async function getNewLoans(existingLoans: number[], shelfAddress: string) {
 
 function getLatestContract(contractArray: ContractArray[], blockNumber: number) {
   if (contractArray.length === 1) return contractArray[0]
-  return contractArray.find((entry) => entry.startBlock! <= blockNumber)
+  return contractArray.sort((a, b) => b.startBlock! - a.startBlock!).find((entry) => entry.startBlock! <= blockNumber)
 }
 
 function chunkArray<T>(array: T[], chunkSize: number): T[][] {
