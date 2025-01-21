@@ -1,8 +1,11 @@
 import { Attestation } from '../../types/models/Attestation'
 
 export class AttestationService extends Attestation {
-  static async init(poolId: string, data: string, timestamp: Date) {
-    logger.info(`Initialising new attestation for pool ${poolId}: ${data}`)
-    return new this(poolId, timestamp, data)
+  static init(poolId: string, remarkId: string, timestamp: Date, data: string) {
+    const id = `${poolId}-${remarkId}`
+    logger.info(`Initialising new attestation ${id} with data: ${data}`)
+    const attestation = new this(id, poolId, timestamp)
+    attestation.data = data
+    return attestation
   }
 }

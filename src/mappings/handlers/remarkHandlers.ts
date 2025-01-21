@@ -1,26 +1,26 @@
 import { SubstrateEvent } from '@subql/types'
 import { errorHandler } from '../../helpers/errorHandler'
 import { RemarkEvent } from '../../helpers/types'
+import { AttestationService } from '../services/attestationService'
 
 export const handleRemark = errorHandler(_handleRemark)
 async function _handleRemark(event: SubstrateEvent<RemarkEvent>) {
-  const [_remarks] = event.event.data
+  const [remarks, _call] = event.event.data
+  logger.info(`Remark event fired for ${event.hash.toString()} at block ${event.block.block.header.number.toNumber()}`)
+  const namedRemarks = remarks.filter((remark) => remark.isNamed)
 
-  for (let i = 0; i <= _remarks.length; i++) {
-    const remark = _remarks[i]
-
-    if (remark.isNamed) {
-      logger.info(`Remark fired for ${remark.asNamed}` + `at block ${event.block.block.header.number.toNumber()}`)
-
-      const isAttestation = remark.asNamed.split(':')[0]
-      const poolId = remark.asNamed.split(':')[1]
-      const attestation = remark.asNamed.split(':')[2]
-
-      if (isAttestation) {
-        logger.info(
-          `Attestation fired for ${poolId}: ${attestation}` + `at block ${event.block.block.header.number.toNumber()}`
-        )
-      }
+  for (const namedRemark of namedRemarks) {
+    const namedRemarkData = namedRemark.asNamed.toUtf8()
+    const [type, poolId, attestationData] = namedRemarkData.split(':')
+    logger.info(`Named remark with data: ${namedRemarkData}`)
+    if (type === 'attestation') {
+      const attestation = await AttestationService.init(
+        poolId,
+        event.hash.toString(),
+        event.block.timestamp!,
+        attestationData
+      )
+      await attestation.save()
     }
   }
 }

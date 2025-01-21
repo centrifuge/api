@@ -180,3 +180,8 @@ dataSources:
           filter:
             module: uniques
             method: MetadataSet
+        - handler: handleRemark
+          kind: substrate/EventHandler
+          filter:
+            module: remarks
+            method: Remark

@@ -1,6 +1,20 @@
 //find out types: const a = createType(api.registry, '[u8;32]', 18)
 import { AugmentedCall, AugmentedRpc, PromiseRpcResult } from '@polkadot/api/types'
-import { Enum, Null, Struct, u128, u32, u64, U8aFixed, Option, Vec, Bytes, Result, bool } from '@polkadot/types'
+import {
+  Enum,
+  Null,
+  Struct,
+  u128,
+  u32,
+  u64,
+  U8aFixed,
+  Option,
+  Vec,
+  Bytes,
+  Result,
+  bool,
+  GenericCall,
+} from '@polkadot/types'
 import { AccountId32, Perquintill, Balance } from '@polkadot/types/interfaces'
 import { ITuple, Observable } from '@polkadot/types/types'
 
@@ -469,6 +483,16 @@ export type InvestOrdersCollectedEvent = ITuple<
   ]
 >
 
+export interface RemarksRemark extends Enum {
+  readonly isIpfsHash: boolean
+  readonly asIpfsHash: Bytes
+  readonly isNamed: boolean
+  readonly asNamed: Bytes
+  readonly isLoan: boolean
+  readonly asLoan: ITuple<[u64, u64]>
+  readonly type: 'IpfsHash' | 'Named' | 'Loan'
+}
+
 export type RedeemOrdersCollectedEvent = ITuple<
   [
     investmentId: TrancheCurrency | TrancheCurrencyBefore1400,
@@ -502,6 +526,8 @@ export type PoolFeesPaidEvent = ITuple<[poolId: u64, feeId: u64, amount: u128, d
 export type PoolFeesList = Vec<PoolFeesOfBucket>
 
 export type OracleFedEvent = ITuple<[feeder: DevelopmentRuntimeOriginCaller, key: OracleKey, value: u128]>
+
+export type RemarkEvent = ITuple<[remarks: Vec<RemarksRemark>, call: GenericCall]>
 
 export type ExtendedRpc = {
   pools: {
@@ -537,12 +563,3 @@ export interface TrancheCurrencyBefore1400 extends Struct {
   poolId: u64
   trancheId: U8aFixed
 }
-
-export interface RemarkEnum extends Enum {
-  isIpfsHash: boolean
-  asIpfsHash: string
-  isNamed: boolean
-  asNamed: string
-}
-
-export type RemarkEvent = ITuple<[remarks: Vec<RemarkEnum>]>
