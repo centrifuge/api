@@ -699,5 +699,7 @@ type Attestation @entity {
   pool: Pool!
   timestamp: Date!
 
+  account: Account! @index
+
   data: String
 }
