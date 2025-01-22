@@ -54,8 +54,13 @@ async function _handleBlock(block: SubstrateBlock): Promise<void> {
   // Update Pool States
   const pools = await PoolService.getCfgActivePools()
   for (const pool of pools) {
-    const currency = (await CurrencyService.getByPoolId(pool.id, { limit: 1 })).pop()
     logger.info(` ## Updating pool ${pool.id} states...`)
+    if (!pool.currencyId) {
+      logger.error(`Pool currencyId not set for ${pool.id}, skipping...`)
+      continue
+    }
+    const [chainId, currencyType, currencyValue] = pool.currencyId.split('-')
+    const currency = await CurrencyService.getOrInit(chainId, currencyType, currencyValue)
 
     if (!pool.currentEpoch) {
       logger.error(`Pool currentEpoch not set for ${pool.id}, skipping...`)
@@ -185,7 +190,7 @@ async function _handleBlock(block: SubstrateBlock): Promise<void> {
     const accruedFees = await pool.getAccruedFees()
     for (const accruals of accruedFees) {
       const [feeId, pending, disbursement] = accruals
-      const poolFee = poolFees.find( fee => fee.id === `${pool.id}-${feeId}`)
+      const poolFee = poolFees.find((fee) => fee.id === `${pool.id}-${feeId}`)
       if (!poolFee) {
         logger.error(`Unable to retrieve PoolFee ${pool.id}-${feeId}, skipping accruals!`)
         continue

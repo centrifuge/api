@@ -692,3 +692,14 @@ type PoolFeeTransaction @entity {
 
   amount: BigInt
 }
+
+type Attestation @entity {
+  id: ID! # extrinsicHash
+
+  pool: Pool!
+  timestamp: Date!
+
+  account: Account! @index
+
+  data: String
+}

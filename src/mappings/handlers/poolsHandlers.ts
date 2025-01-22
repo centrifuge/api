@@ -22,9 +22,11 @@ async function _handlePoolCreated(event: SubstrateEvent<PoolCreatedEvent>): Prom
   const [, , poolId, essence] = event.event.data
   const timestamp = event.block.timestamp
   if (!timestamp) throw new Error(`Block ${event.block.block.header.number.toString()} has no timestamp`)
+
   const formattedCurrency =
     `${LOCAL_CHAIN_ID}-${essence.currency.type}-` +
     `${currencyFormatters[essence.currency.type](essence.currency.value).join('-')}`
+
   logger.info(
     `Creating Pool ${poolId.toString()} with currency: ${formattedCurrency} ` +
       `in block ${event.block.block.header.number}`

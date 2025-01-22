@@ -29,7 +29,9 @@ export class EpochService extends Epoch {
     epoch.sumPoolFeesPaidAmount = BigInt(0)
 
     epoch.states = trancheIds.map((trancheId) => {
-      const epochState = new EpochState(`${poolId}-${epochNr}-${trancheId}`, epoch.id, trancheId)
+      const epochStateId = `${poolId}-${epochNr.toString(10)}-${trancheId}`
+      logger.info(`Initialising epoch state ${epochStateId}`)
+      const epochState = new EpochState(epochStateId, epoch.id, trancheId)
       epochState.sumOutstandingInvestOrders = BigInt(0)
       epochState.sumOutstandingRedeemOrders = BigInt(0)
       epochState.sumOutstandingRedeemOrdersCurrency = BigInt(0)
@@ -50,9 +52,14 @@ export class EpochService extends Epoch {
     return epoch
   }
 
-  async saveWithStates() {
-    await this.save()
-    return Promise.all(this.states.map((epochState) => epochState.save()))
+  public async saveWithStates() {
+    const epochStatesSaves = this.states.map((epochState) => epochState.save())
+    await Promise.all(epochStatesSaves)
+
+    const epochSave = this.save()
+    await epochSave
+
+    return this
   }
 
   public getStates() {
