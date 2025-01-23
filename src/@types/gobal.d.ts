@@ -1,3 +1,4 @@
+/* eslint-disable no-var */
 import { ApiPromise } from '@polkadot/api'
 import type { Provider } from '@ethersproject/providers'
 import { ApiDecoration } from '@polkadot/api/types'
@@ -11,5 +12,7 @@ declare global {
   const api: ApiAt & Provider
   const unsafeApi: ApiPromise | undefined
   function getNodeEvmChainId(): Promise<string | undefined>
+  var isSubstrateNode: boolean
+  var isEvmNode: boolean
 }
 export {}

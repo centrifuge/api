@@ -7,13 +7,12 @@ import { PoolService } from '../services/poolService'
 import { TrancheService } from '../services/trancheService'
 import { InvestorTransactionData, InvestorTransactionService } from '../services/investorTransactionService'
 import { CurrencyService } from '../services/currencyService'
-import { BlockchainService } from '../services/blockchainService'
+import { BlockchainService, LOCAL_CHAIN_ID } from '../services/blockchainService'
 import { CurrencyBalanceService } from '../services/currencyBalanceService'
 import { TrancheBalanceService } from '../services/trancheBalanceService'
 import { escrows } from '../../config'
 import { InvestorPositionService } from '../services/investorPositionService'
 import { getPeriodStart } from '../../helpers/timekeeperService'
-//const networkPromise = typeof ethApi.getNetwork === 'function' ? ethApi.getNetwork() : null
 
 export const handleEvmDeployTranche = errorHandler(_handleEvmDeployTranche)
 async function _handleEvmDeployTranche(event: DeployTrancheLog): Promise<void> {
@@ -23,6 +22,7 @@ async function _handleEvmDeployTranche(event: DeployTrancheLog): Promise<void> {
 
   const chainId = await getNodeEvmChainId()
   if (!chainId) throw new Error('Unable to retrieve chainId')
+  await BlockchainService.getOrInit(LOCAL_CHAIN_ID)
   const evmBlockchain = await BlockchainService.getOrInit(chainId)
 
   const poolId = _poolId.toString()
@@ -73,12 +73,14 @@ async function _handleEvmTransfer(event: TransferLog): Promise<void> {
   const _isFromUserEscrow = fromEvmAddress === userEscrowAddress
 
   if (!evmToken.poolId || !evmToken.trancheId) throw new Error('This is not a tranche token')
+  const pool = await PoolService.getById(evmToken.poolId)
+  if (!pool) throw new Error('Pool not found!')
   const trancheId = evmToken.trancheId.split('-')[1]
-  const tranche = await TrancheService.getById(evmToken.poolId, trancheId)
+  const tranche = await TrancheService.getById(pool.id, trancheId)
   if (!tranche) throw new Error('Tranche not found!')
 
   const orderData: Omit<InvestorTransactionData, 'address'> = {
-    poolId: evmToken.poolId,
+    poolId: pool.id,
     trancheId: trancheId,
     hash: event.transactionHash,
     timestamp: timestamp,

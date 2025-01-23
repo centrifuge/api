@@ -5,19 +5,20 @@ const EVM_SUFFIX = '45564d00'
 
 export class AccountService extends Account {
   static async init(address: string) {
-    logger.info(`Initialising new account: ${address}`)
     if (await this.isForeignEvm(address)) {
       const chainId = this.readEvmChainId(address)
+      logger.info(`Initialising new account: ${address} as foreign for chainId: ${chainId}`)
       const account = new this(address, chainId)
       account.evmAddress = address.substring(0, 42)
       return account
     } else {
+      logger.info(`Initialising new account: ${address}`)
       return new this(address, LOCAL_CHAIN_ID)
     }
   }
 
   static async getOrInit(address: string, blockchainService = BlockchainService): Promise<AccountService> {
-    let account = (await this.get(address))
+    let account = await this.get(address)
     if (!account) {
       account = await this.init(address)
       await blockchainService.getOrInit(account.chainId)
@@ -27,7 +28,7 @@ export class AccountService extends Account {
   }
 
   static evmToSubstrate(evmAddress: string, chainId: string) {
-    const chainHex = parseInt(chainId,10).toString(16).padStart(4, '0')
+    const chainHex = parseInt(chainId, 10).toString(16).padStart(4, '0')
     return `0x${evmAddress.substring(2).toLowerCase()}000000000000${chainHex}${EVM_SUFFIX}`
   }
 
@@ -40,8 +41,12 @@ export class AccountService extends Account {
   }
 
   static async isForeignEvm(address: string) {
-    const nodeEvmChainId = await getNodeEvmChainId()
-    return this.isEvm(address) && this.readEvmChainId(address) !== nodeEvmChainId
+    if (isSubstrateNode) {
+      const nodeEvmChainId = await getNodeEvmChainId()
+      return this.isEvm(address) && this.readEvmChainId(address) !== nodeEvmChainId
+    } else {
+      return this.isEvm(address)
+    }
   }
 
   public isForeignEvm() {

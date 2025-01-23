@@ -8,6 +8,8 @@ const isSubstrateNode = 'query' in api
 const isEvmNode = typeof (api as Provider).getNetwork === 'function'
 const ethNetworkProm = isEvmNode ? (api as Provider).getNetwork() : null
 
+global.isSubstrateNode = isSubstrateNode
+global.isEvmNode = isEvmNode
 global.fetch = fetch as unknown as typeof global.fetch
 global.atob = atob as typeof global.atob
 global.getNodeEvmChainId = async function () {
