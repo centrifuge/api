@@ -186,6 +186,10 @@ async function _handleEpochExecuted(event: SubstrateEvent<EpochClosedExecutedEve
   const pool = await PoolService.getById(poolId.toString())
   if (!pool) throw missingPool
 
+  assertPropInitialized(pool, 'currencyId', 'string')
+  const currency = await CurrencyService.get(pool.currencyId!)
+  if (!currency) throw new Error(`Currency ${pool.currencyId!} not found for pool ${pool.id}`)
+
   const epoch = await EpochService.getById(poolId.toString(), epochId.toNumber())
   if (!epoch) throw new Error(`Epoch ${epochId.toString(10)} not found for pool ${poolId.toString(10)}`)
 
@@ -195,7 +199,6 @@ async function _handleEpochExecuted(event: SubstrateEvent<EpochClosedExecutedEve
   await pool.executeEpoch(epochId.toNumber())
   await pool.increaseInvestments(epoch.sumInvestedAmount!)
   await pool.increaseRedemptions(epoch.sumRedeemedAmount!)
-  await pool.save()
 
   // Compute and save aggregated order fulfillment
   const tranches = await TrancheService.getByPoolId(poolId.toString())
@@ -297,6 +300,12 @@ async function _handleEpochExecuted(event: SubstrateEvent<EpochClosedExecutedEve
     }
   }
   await nextEpoch.saveWithStates()
+
+  // Update pool nav
+  const partialNavs = tranches.map((tranche) => tranche.computePartialNav())
+  await pool.setNav(partialNavs.reduce((nav, partialNav) => nav + partialNav, BigInt(0)))
+  await pool.updateNormalizedNAV(currency.decimals)
+  await pool.save()
 
   // Track investments and redemptions for onchain cash
   if (!event.extrinsic) throw new Error('Event has no extrinsic')

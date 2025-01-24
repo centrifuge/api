@@ -287,6 +287,12 @@ export class TrancheService extends Tranche {
     }
     this.snapshot = snapshots.pop()
   }
+
+  public computePartialNav(): bigint {
+    const supply = bnToBn(this.tokenSupply)
+    const price = bnToBn(this.tokenPrice)
+    return nToBigInt(supply.mul(price).div(WAD))
+  }
 }
 
 type BigIntFields<T> = { [K in keyof Required<T>]: Required<T>[K] extends bigint ? K : never }[keyof Required<T>]

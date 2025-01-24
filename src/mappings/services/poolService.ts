@@ -286,6 +286,13 @@ export class PoolService extends Pool {
     } else {
       this.normalizedNAV = BigInt(this.netAssetValue!.toString(10).substring(0, WAD_DIGITS))
     }
+    logger.info(`Normalized NAV for pool ${this.id} set to ${this.normalizedNAV.toString(10)}`)
+    return this
+  }
+
+  public setNav(nav: bigint) {
+    logger.info(`Setting nav for pool ${this.id} to ${nav.toString(10)}`)
+    this.netAssetValue = nav
     return this
   }
 
