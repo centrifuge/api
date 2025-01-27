@@ -1,0 +1,19 @@
+#!/bin/sh
+
+export CHAIN_ID=${CHAIN_ID:-centrifuge} 
+export NODE_ID=${NODE_ID:-centrifuge}
+
+yarn projectgen
+
+if [ $# -eq 0 ]; then
+  # If no arguments given, use default command
+  set -- /bin/run -f="/app/project-${NODE_ID}.yaml"
+elif [ "${1#-}" != "$1" ]; then
+  # If first arg starts with '-', prepend default command
+  set -- /bin/run -f="/app/project-${NODE_ID}.yaml" "$@"
+else
+  # Otherwise use args as-is (allows overriding with direct commands)
+  set -- "$@"
+fi
+
+exec "$@"

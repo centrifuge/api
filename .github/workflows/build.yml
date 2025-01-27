@@ -1,0 +1,75 @@
+name: Build and Push Docker Images
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ 'v*.*.*' ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME_CFG: ${{ github.repository }}-cfg
+  IMAGE_NAME_EVM: ${{ github.repository }}-evm
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata (tags, labels) for CFG
+        id: meta-cfg
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_CFG }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=sha
+
+      - name: Extract metadata (tags, labels) for EVM
+        id: meta-evm
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME_EVM }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=sha
+
+      - name: Build and push CFG Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile.cfg
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta-cfg.outputs.tags }}
+          labels: ${{ steps.meta-cfg.outputs.labels }}
+
+      - name: Build and push EVM Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: Dockerfile.evm
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta-evm.outputs.tags }}
+          labels: ${{ steps.meta-evm.outputs.labels }}

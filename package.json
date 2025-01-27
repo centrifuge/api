@@ -28,7 +28,10 @@
   ],
   "author": "Centrifuge",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "yaml-merge-cli": "^1.1.5",
+    "envsub": "^4.1.0"
+  },
   "devDependencies": {
     "@commitlint/cli": "^17.0.2",
     "@commitlint/config-conventional": "^17.0.2",
@@ -45,7 +48,6 @@
     "@typescript-eslint/eslint-plugin": "^6.15.0",
     "@typescript-eslint/parser": "^6.15.0",
     "abab": "^2.0.6",
-    "envsub": "^4.1.0",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.0.1",
@@ -56,8 +58,7 @@
     "prettier": "^3.1.1",
     "prettier-eslint": "^16.2.0",
     "ts-jest": "^29.0.3",
-    "typescript": "^5.2.2",
-    "yaml-merge-cli": "^1.1.5"
+    "typescript": "^5.2.2"
   },
   "lint-staged": {
     "src/**/*.{js,ts}": [
