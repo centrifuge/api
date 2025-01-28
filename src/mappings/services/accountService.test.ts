@@ -1,6 +1,8 @@
 import { AccountService } from './accountService'
 
 global.getNodeEvmChainId = () => Promise.resolve('2030')
+global.isSubstrateNode = true
+global.isEvmNode = false
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 api.query['evmChainId'] = { chainId: jest.fn(() => ({ toString: () => '2030' })) } as any
