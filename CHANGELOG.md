@@ -1,5 +1,65 @@
 # Changelog
 
+## [2.2.0](https://github.com/centrifuge/api/compare/v2.1.0...v2.2.0) (2025-01-28)
+
+
+### Features
+
+* add 7 day apy ([#218](https://github.com/centrifuge/api/issues/218)) ([8a13a97](https://github.com/centrifuge/api/commit/8a13a97c397d86d1d7cfe837206240a921e3439e))
+* add AssetPosition entity and track realized p&l ([#193](https://github.com/centrifuge/api/issues/193)) ([cc358ee](https://github.com/centrifuge/api/commit/cc358eeadac190d36732bdd2d8fe7eb1650c233b))
+* add initialised at timestamp to tranche balances ([#264](https://github.com/centrifuge/api/issues/264)) ([e9faa04](https://github.com/centrifuge/api/commit/e9faa04c95fd16aabca0959d74f44318cd17646d))
+* add missing quantity settlement price for handleLoanDebtTransferred1024 ([#192](https://github.com/centrifuge/api/issues/192)) ([6a7b554](https://github.com/centrifuge/api/commit/6a7b554ebe736dd857f8460a4f24d1042be46c44))
+* add unrealized P&L ([#197](https://github.com/centrifuge/api/issues/197)) ([43f43b0](https://github.com/centrifuge/api/commit/43f43b0748b23759f182ecaf7320e8e87c6fc6c9))
+* add yieldMTD, yieldQTD, yieldYTD ([#204](https://github.com/centrifuge/api/issues/204)) ([8c6c48e](https://github.com/centrifuge/api/commit/8c6c48eb01347c1072c88996ec3c77da9e3da173)), closes [#176](https://github.com/centrifuge/api/issues/176)
+* extend tinlake data, add debt increase/decrease handlers ([#241](https://github.com/centrifuge/api/issues/241)) ([42bc43c](https://github.com/centrifuge/api/commit/42bc43c734ba9813686139f66b7167f097611266))
+* link asset transactions and pool fee transactions to epoch entity ([#203](https://github.com/centrifuge/api/issues/203)) ([eeb9e3f](https://github.com/centrifuge/api/commit/eeb9e3f04b3665a248d4213f8f8ac3647d140860))
+* migration to liquidity pools v2 ([#244](https://github.com/centrifuge/api/issues/244)) ([b1e78e1](https://github.com/centrifuge/api/commit/b1e78e1c4134f86f1f91296db3f51446dd9faf72))
+* set up remark handler ([#273](https://github.com/centrifuge/api/issues/273)) ([8cc1cc6](https://github.com/centrifuge/api/commit/8cc1cc6f7bce2c87856c5b462b95f03d43df6f96))
+* track cash transfers between offchain cash assets ([#238](https://github.com/centrifuge/api/issues/238)) ([fca415a](https://github.com/centrifuge/api/commit/fca415acdf2d1217013d756c0e5d117449e9ff87))
+* track future cashflows per asset ([#219](https://github.com/centrifuge/api/issues/219)) ([99ea318](https://github.com/centrifuge/api/commit/99ea318f9775ab587a03de42a1f0df84dcf78e46))
+* track investments and redemptions in onchain cash asset ([#188](https://github.com/centrifuge/api/issues/188)) ([aef3249](https://github.com/centrifuge/api/commit/aef32496b239fc34cda8babfb35a54578170e3a9)), closes [#163](https://github.com/centrifuge/api/issues/163)
+* track investor side profit ([#226](https://github.com/centrifuge/api/issues/226)) ([7b38112](https://github.com/centrifuge/api/commit/7b3811268c89ddde4f9c1911955ea8000f1cb1da))
+* track oracle transactions ([#200](https://github.com/centrifuge/api/issues/200)) ([1dcdb7c](https://github.com/centrifuge/api/commit/1dcdb7c99473db870b69daa1023bdc4029047f91)), closes [#161](https://github.com/centrifuge/api/issues/161)
+* track tinlake token prices ([#261](https://github.com/centrifuge/api/issues/261)) ([5367606](https://github.com/centrifuge/api/commit/536760657cac3a09da5a515ec37c024f7e097e13))
+* update prices ([#199](https://github.com/centrifuge/api/issues/199)) ([f4ccd62](https://github.com/centrifuge/api/commit/f4ccd6296fb2620c399e471aae204b2eb4f9bc78))
+
+
+### Bug Fixes
+
+* add normalized NAV to pool snapshot ([#212](https://github.com/centrifuge/api/issues/212)) ([091e1e8](https://github.com/centrifuge/api/commit/091e1e8f7edd3ece0ca63ee9c9fde93c791a11db))
+* allow epoch number to be null ([#228](https://github.com/centrifuge/api/issues/228)) ([0da65cd](https://github.com/centrifuge/api/commit/0da65cdb6c6112cd464e653caa8ae525cec4406f))
+* asset metadata updates ([#248](https://github.com/centrifuge/api/issues/248)) ([d310b6a](https://github.com/centrifuge/api/commit/d310b6adc243ea49cc96c086efc7263f484d0fa1))
+* asset names ([#190](https://github.com/centrifuge/api/issues/190)) ([d8de413](https://github.com/centrifuge/api/commit/d8de413d2f43802dcdb59f6cd13a97bffa435af0))
+* cfg no tranche snapshot values ([69b2b1f](https://github.com/centrifuge/api/commit/69b2b1f3fc6d17fc0a8d483a13a048ea8fba711c))
+* cfg node chain init ([#269](https://github.com/centrifuge/api/issues/269)) ([2de44dc](https://github.com/centrifuge/api/commit/2de44dcf91fc7efd6a8cb1ea5d013df8e1471cc5))
+* cfg pending amounts ([#270](https://github.com/centrifuge/api/issues/270)) ([d1ca2a2](https://github.com/centrifuge/api/commit/d1ca2a2e68b64204d08899e5ad04137632a18a3a))
+* check if name is not null ([#191](https://github.com/centrifuge/api/issues/191)) ([e99d281](https://github.com/centrifuge/api/commit/e99d2818b2fb55a06f38d40e33816cb0b2d799e9))
+* cli downgrade ([3974803](https://github.com/centrifuge/api/commit/3974803de9847eaedf5b65d34094dda9f3dbd64e))
+* cli downgrade ([05623d3](https://github.com/centrifuge/api/commit/05623d30f6e992489e9a882ff35c0bc6de7680a6))
+* disable async store cache ([#250](https://github.com/centrifuge/api/issues/250)) ([7bbcc7e](https://github.com/centrifuge/api/commit/7bbcc7ef74e5f946329c29be7d462e786100e74e))
+* epoch nav computations for snapshots ([c7f2d5d](https://github.com/centrifuge/api/commit/c7f2d5d1dc82fca745573f3440bc812a9fd72d66))
+* ff1 config ([#275](https://github.com/centrifuge/api/issues/275)) ([7cf4638](https://github.com/centrifuge/api/commit/7cf4638be1a2be77c87fce24e9bacca35f1477d5))
+* fix last contract selection for FF1 ([b6e95b1](https://github.com/centrifuge/api/commit/b6e95b11d7db19ee62d28b377f6d5d132aee7149))
+* improve eth node calls on init ([9ecc2ae](https://github.com/centrifuge/api/commit/9ecc2aec92a9b986c88037710a31f53d98346842))
+* incosistent initialisation of accounts on evm ([f6c612c](https://github.com/centrifuge/api/commit/f6c612c21afb9c91bf512111ccd01241d7dfe2e7))
+* init epoch number ([#229](https://github.com/centrifuge/api/issues/229)) ([113551b](https://github.com/centrifuge/api/commit/113551b3c529a6bf77edefd33b883b882d309551))
+* investment positions ([#259](https://github.com/centrifuge/api/issues/259)) ([9ec23c4](https://github.com/centrifuge/api/commit/9ec23c4eb016640c5f7d39eb1c985b95b309f997))
+* mapping of PoolManager to escrow addresses ([#263](https://github.com/centrifuge/api/issues/263)) ([d09dfc0](https://github.com/centrifuge/api/commit/d09dfc08252b92ff783566c71159dde0fe3fe627))
+* missing “withdrawal for fees” asset tx in onchain reserve ([#246](https://github.com/centrifuge/api/issues/246)) ([ec2dd6a](https://github.com/centrifuge/api/commit/ec2dd6af6b0e181bebaadb3935adb1f82d2d3848)), closes [#233](https://github.com/centrifuge/api/issues/233)
+* missing epoch on some poolFee creation leading to failing poolFee tracking ([eeb9e3f](https://github.com/centrifuge/api/commit/eeb9e3f04b3665a248d4213f8f8ac3647d140860))
+* missing name in assets ([#201](https://github.com/centrifuge/api/issues/201)) ([39f5dc3](https://github.com/centrifuge/api/commit/39f5dc371e827a9f4a502e4debc560b97dada2fe)), closes [#155](https://github.com/centrifuge/api/issues/155)
+* missing poolFee values ([#247](https://github.com/centrifuge/api/issues/247)) ([c91fc4a](https://github.com/centrifuge/api/commit/c91fc4a119f0f4520428245a49b03645c4f390e9))
+* missing yield fields on tranche snapshots ([#206](https://github.com/centrifuge/api/issues/206)) ([5cc0611](https://github.com/centrifuge/api/commit/5cc0611abf124bf3274cead7f5169a35ed259375))
+* missingId error ([#267](https://github.com/centrifuge/api/issues/267)) ([99480da](https://github.com/centrifuge/api/commit/99480daf1f33aaa57f04e95061dbf760bef21b9d))
+* ns2 config ([#274](https://github.com/centrifuge/api/issues/274)) ([694bfdf](https://github.com/centrifuge/api/commit/694bfdf8e3e2e0dbf77e1297f497d3fbc319e757))
+* processed pools object missing latest assessor ([#268](https://github.com/centrifuge/api/issues/268)) ([69d9c3c](https://github.com/centrifuge/api/commit/69d9c3c94a1d60bc2e91594cdc1a919c1015e785))
+* rename disable flag ([#251](https://github.com/centrifuge/api/issues/251)) ([7908701](https://github.com/centrifuge/api/commit/7908701aba6282ae637b9ab83119d257df2396b9))
+* skip failing calls for Fortunafi 1 ([#243](https://github.com/centrifuge/api/issues/243)) ([0546595](https://github.com/centrifuge/api/commit/0546595fab58e7d8101b5a829f3334d842ffb125))
+* support assets without maturity ([#216](https://github.com/centrifuge/api/issues/216)) ([9e8d854](https://github.com/centrifuge/api/commit/9e8d8547f33b80ea16d7a306aa569bcf056b6c04)), closes [#205](https://github.com/centrifuge/api/issues/205)
+* tranche init ([1caa336](https://github.com/centrifuge/api/commit/1caa336057257e9a8039803461cb016bfe4ea772))
+* update ethHandler to properly parse loan data ([#252](https://github.com/centrifuge/api/issues/252)) ([f3373af](https://github.com/centrifuge/api/commit/f3373af8bae72c857d1a66b5684ae566732a887d))
+* use tranche token price RT api ([#180](https://github.com/centrifuge/api/issues/180)) ([345f743](https://github.com/centrifuge/api/commit/345f743cc8cba5e83e6396abaaa2e3426b187acb))
+
 ## [2.1.0](https://github.com/centrifuge/pools-subql/compare/v2.0.0...v2.1.0) (2024-06-03)
 
 
