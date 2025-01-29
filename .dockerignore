@@ -1,0 +1,17 @@
+.env
+.envrc
+.git
+.gitignore
+.yarn
+.yarnrc
+.yarnrc.yml
+*.log
+*.log.*
+*.log.*.*
+subquery-multichain.yaml
+project-*.yaml
+dist
+node_modules
+commitlint.config.js
+.nvmrc
+.prettierrc
