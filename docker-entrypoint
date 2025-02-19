@@ -3,6 +3,10 @@
 export CHAIN_ID=${CHAIN_ID:-centrifuge} 
 export NODE_ID=${NODE_ID:-centrifuge}
 
+echo "Starting with parameters:"
+echo "CHAIN_ID: ${CHAIN_ID}"
+echo "NODE_ID: ${NODE_ID}"
+
 yarn projectgen
 
 if [ $# -eq 0 ]; then
