@@ -1,5 +1,17 @@
 # Changelog
 
+## [2.3.0](https://github.com/centrifuge/api/compare/v2.2.0...v2.3.0) (2025-02-20)
+
+
+### Features
+
+* handle force-clean in entrypoint ([a9b6ae0](https://github.com/centrifuge/api/commit/a9b6ae0d39630e2e3b9ebc6af4102262b7649755))
+
+
+### Bug Fixes
+
+* demo endpoint ([457c818](https://github.com/centrifuge/api/commit/457c81837dc3e88241d2561e7c7620263fd83b25))
+
 ## [2.2.0](https://github.com/centrifuge/api/compare/v2.1.0...v2.2.0) (2025-01-28)
 
 
