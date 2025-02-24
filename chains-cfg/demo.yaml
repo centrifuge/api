@@ -6,4 +6,4 @@ network:
     file: ./dist/chaintypes.js
 dataSources:
   - kind: substrate/Runtime
-    startBlock: 2758750 # June 10th 2024
+    startBlock: 4113188 # Jan 1st 2025
