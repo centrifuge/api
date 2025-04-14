@@ -28,6 +28,8 @@ type Pool @entity {
 
   createdAt: Date
   createdAtBlockNumber: Int
+  closedAt: Date
+  closedAtBlockNumber: Int
 
   currency: Currency
   metadata: String
