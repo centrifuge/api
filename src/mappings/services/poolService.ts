@@ -652,6 +652,16 @@ export class PoolService extends Pool {
     this.netAssetValue = this.portfolioValuation! + this.totalReserve!
     logger.info(`Set pool ${this.id} netAssetValue to: ${this.netAssetValue.toString()}`)
   }
+
+  public close(closedAt: Date, closedAtBlockNumber: number) {
+    this.isActive = false
+    this.closedAt = closedAt
+    this.closedAtBlockNumber = closedAtBlockNumber
+  }
+
+  public isClosed() {
+    return !this.isActive && this.closedAt !== undefined && this.closedAtBlockNumber !== undefined
+  }
 }
 
 export interface ActiveLoanData {
