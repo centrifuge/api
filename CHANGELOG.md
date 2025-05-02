@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.3.1](https://github.com/centrifuge/api/compare/v2.3.0...v2.3.1) (2025-05-02)
+
+
+### Bug Fixes
+
+* breaking docker pulls ([59f6967](https://github.com/centrifuge/api/commit/59f69678da8c4b3e7f97dcd2d41ecc2569172d8c))
+
 ## [2.3.0](https://github.com/centrifuge/api/compare/v2.2.0...v2.3.0) (2025-04-22)
 
 
