@@ -1,7 +1,7 @@
 {
   "name": "@centrifuge/pools-subql",
   "version": "2.3.0",
-  "description": "Subquery for the pools functionality",
+  "description": "Subquery for indexing Centrifuge pools",
   "main": "dist/index.js",
   "scripts": {
     "build": "subql build",
