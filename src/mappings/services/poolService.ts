@@ -472,9 +472,10 @@ export class PoolService extends Pool {
   public async getPortfolio(): Promise<ActiveLoanData> {
     logger.info(`Querying runtime loansApi.portfolio for pool: ${this.id}`)
     const portfolioData = await api.call.loansApi.portfolio(this.id)
-    logger.info(`${portfolioData.length} assets found.`)
-    return portfolioData.reduce<ActiveLoanData>((obj, current) => {
-      const [assetId, asset] = current
+    logger.info(`Updating ${portfolioData.length} assets for pool: ${this.id}`)
+
+    const portfolio: ActiveLoanData = {}
+    for (const [assetId, asset] of portfolioData.toArray()) {
       const {
         outstandingPrincipal,
         outstandingInterest,
@@ -493,8 +494,7 @@ export class PoolService extends Pool {
       const timeToMaturity = actualMaturityDate
         ? Math.round((actualMaturityDate.valueOf() - Date.now().valueOf()) / 1000)
         : undefined
-
-      obj[assetId.toString(10)] = {
+      const assetData = {
         outstandingPrincipal: outstandingPrincipal.toBigInt(),
         outstandingInterest: outstandingInterest.toBigInt(),
         outstandingDebt: outstandingPrincipal.toBigInt() + outstandingInterest.toBigInt(),
@@ -510,8 +510,9 @@ export class PoolService extends Pool {
         totalRepaidInterest: interest.toBigInt(),
         totalRepaidUnscheduled: unscheduled.toBigInt(),
       }
-      return obj
-    }, {})
+      portfolio[assetId.toString(10)] = { ...assetData }
+    }
+    return portfolio
   }
 
   public async getTrancheTokenPrices() {

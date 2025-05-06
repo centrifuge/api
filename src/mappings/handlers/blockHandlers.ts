@@ -122,14 +122,15 @@ async function _handleBlock(block: SubstrateBlock): Promise<void> {
       }
     }
     // Asset operations
+    logger.info(` ## Updating assets for pool ${pool.id}...`)
     const activeAssetData = await pool.getPortfolio()
     pool.resetOffchainCashValue()
     pool.resetUnrealizedProfit()
-    for (const assetId in activeAssetData) {
+    for (const [assetId, assetData] of Object.entries(activeAssetData)) {
       const asset = await AssetService.getById(pool.id, assetId)
       if (!asset) continue
       await asset.loadSnapshot(lastPeriodStart)
-      await asset.updateActiveAssetData(activeAssetData[assetId])
+      await asset.updateActiveAssetData(assetData)
       if (asset.notional && asset.currentPrice) {
         await asset.updateUnrealizedProfit(
           await AssetPositionService.computeUnrealizedProfitAtPrice(asset.id, asset.currentPrice),
@@ -184,8 +185,10 @@ async function _handleBlock(block: SubstrateBlock): Promise<void> {
     } else {
       logger.warn(`Cannot update NAV for pool ${pool.id} as NO currency found / initialised`)
     }
+    logger.info(` ## Pool ${pool.id} assets update completed!`)
 
     //PoolFees operations
+    logger.info(` ## Updating poolFees for pool ${pool.id}...`)
     const poolFees = await PoolFeeService.getActives(pool.id)
     const accruedFees = await pool.getAccruedFees()
     for (const accruals of accruedFees) {
@@ -217,6 +220,8 @@ async function _handleBlock(block: SubstrateBlock): Promise<void> {
     }
     const sumPoolFeesPendingAmount = await PoolFeeService.computeSumPendingFees(poolFees)
     await pool.updateSumPoolFeesPendingAmount(sumPoolFeesPendingAmount)
+    logger.info(` ## Pool ${pool.id} poolFees update completed!`)
+
     await pool.save()
     poolsToSnapshot.push(pool)
     logger.info(`## Pool ${pool.id} states update completed!`)

@@ -81,7 +81,7 @@ export class AssetService extends Asset {
   }
 
   static async getById(poolId: string, assetId: string) {
-    const asset = (await this.get(`${poolId}-${assetId}`))
+    const asset = await this.get(`${poolId}-${assetId}`)
     return asset as AssetService
   }
 
@@ -134,12 +134,14 @@ export class AssetService extends Asset {
   }
 
   public updateAssetSpecs(decodedAssetSpecs: AssetSpecs) {
-    logger.info(`Updating asset specs for ${this.id}`)
+    for (const [key, value] of Object.entries(decodedAssetSpecs)) {
+      logger.info(`Updating ${key} for asset ${this.id} to : ${value}`)
+    }
     Object.assign(this, decodedAssetSpecs)
   }
 
   public updateCurrentPrice(currentPrice: bigint) {
-    logger.info(`Updating current price for asset ${this.id} to ${currentPrice}`)
+    logger.info(`Updating currentPrice for asset ${this.id} to ${currentPrice}`)
     this.currentPrice = currentPrice
   }
 
@@ -155,10 +157,19 @@ export class AssetService extends Asset {
     this.status = AssetStatus.CLOSED
   }
 
-  public async updateActiveAssetData(activeAssetData: ActiveLoanData[keyof ActiveLoanData]) {
+  public updateActiveAssetData(activeAssetData: ActiveLoanData[keyof ActiveLoanData]) {
     // Current price was always 0 until spec version 1025
+    if (!activeAssetData) {
+      logger.warn(`activeAssetData is undefined for assetId ${this.id} in pool ${this.poolId}`)
+      return this
+    }
+
     const specVersion = api.runtimeVersion.specVersion.toNumber()
     if (specVersion < 1025) delete activeAssetData.currentPrice
+
+    for (const [key, value] of Object.entries(activeAssetData)) {
+      logger.info(`Updating ${key} for asset ${this.id} to: ${value}`)
+    }
 
     // Set all active asset values
     Object.assign(this, activeAssetData)
@@ -174,6 +185,7 @@ export class AssetService extends Asset {
         this.outstandingInterest! - this.snapshot.outstandingInterest! + deltaRepaidInterestAmount
       logger.info(`Updated outstanding interest for asset: ${this.id} to ${this.outstandingInterest!.toString()}`)
     }
+    return this
   }
 
   public async updateItemMetadata() {

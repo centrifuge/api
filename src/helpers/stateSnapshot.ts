@@ -86,13 +86,3 @@ export interface BlockInfo {
   number: number
   timestamp: Date
 }
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function logObject(object: any) {
-  return logger.info(
-    JSON.stringify(
-      object,
-      (_key, value) => (typeof value === 'bigint' ? value.toString() : value) // return everything else unchanged
-    )
-  )
-}
