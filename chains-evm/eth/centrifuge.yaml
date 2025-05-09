@@ -11,6 +11,14 @@ dataSources:
     startBlock: 20432390
     options:
       address: '0x91808B5E2F6d7483D41A681034D7c9DbB64B9E29'
+  - kind: ethereum/Runtime #CFG Token
+    startBlock: 22166560 # Apr 15 2025
+    options:
+      address: '0xcccCCCcCCC33D538DBC2EE4fEab0a7A1FF4e8A94'
+  - kind: ethereum/Runtime #wCFG Token
+    startBlock: 22166560 # Apr 15 2025
+    options:
+      address: '0xc221b7e65ffc80de234bbb6667abdd46593d34f0'
   - kind: ethereum/Runtime #Tinlake
     startBlock: 11063000
     options:

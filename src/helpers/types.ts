@@ -15,7 +15,7 @@ import {
   bool,
   GenericCall,
 } from '@polkadot/types'
-import { AccountId32, Perquintill, Balance } from '@polkadot/types/interfaces'
+import { AccountId32, Perquintill, Balance, H160 } from '@polkadot/types/interfaces'
 import { ITuple, Observable } from '@polkadot/types/types'
 
 export interface PoolDetails extends Struct {
@@ -528,6 +528,8 @@ export type PoolFeesList = Vec<PoolFeesOfBucket>
 export type OracleFedEvent = ITuple<[feeder: DevelopmentRuntimeOriginCaller, key: OracleKey, value: u128]>
 
 export type RemarkEvent = ITuple<[remarks: Vec<RemarksRemark>, call: GenericCall]>
+
+export type CfgMigrationInitiatedEvent = ITuple<[sender: AccountId32, receiver: H160, amount: u128]>
 
 export type ExtendedRpc = {
   pools: {

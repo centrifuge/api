@@ -185,3 +185,8 @@ dataSources:
           filter:
             module: remarks
             method: Remark
+        - handler: handleCfgMigrationInitiated
+          kind: substrate/EventHandler
+          filter:
+            module: cfgMigration
+            method: CfgMigrationInitiated
