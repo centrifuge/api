@@ -6,7 +6,7 @@
   "scripts": {
     "build": "subql build",
     "build:dev": "subql build --mode=dev",
-    "dev": "docker compose down -v --remove-orphans && docker compose pull && docker compose up -d",
+    "dev": "docker compose down -v --remove-orphans && yarn build:dev &&docker compose pull && docker compose up -d",
     "prepack": "rm -rf dist && subql build",
     "test": "jest",
     "test:smoke": "jest -c jest.smoke.config.ts",
