@@ -393,7 +393,7 @@ type OracleTransaction @entity {
 
 type Account @entity {
   id: ID!
-  chain: Blockchain!
+  chain: Blockchain! @index
   evmAddress: String @index
 
   pureProxies: [PureProxy] @derivedFrom(field: "account")
