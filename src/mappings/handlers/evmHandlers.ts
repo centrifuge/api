@@ -24,8 +24,6 @@ async function _handleEvmDeployTranche(event: DeployTrancheLog): Promise<void> {
   const [_poolId, _trancheId, tokenAddress] = event.args
   const poolManagerAddress = event.address
 
-  const chainId = await getNodeEvmChainId()
-  if (!chainId) throw new Error('Unable to retrieve chainId')
   await BlockchainService.getOrInit(LOCAL_CHAIN_ID)
   const evmBlockchain = await BlockchainService.getOrInit(chainId)
 
@@ -64,9 +62,7 @@ async function _handleEvmTransfer(event: TransferLog): Promise<void> {
 
   const timestamp = new Date(Number(event.block.timestamp) * 1000)
   const evmTokenAddress = event.address
-  const chainId = await getNodeEvmChainId()
-  if (!chainId) throw new Error('Unable to retrieve chainId')
-  const evmBlockchain = await BlockchainService.getOrInit(chainId)
+  const evmBlockchain = await BlockchainService.getOrInit(LOCAL_CHAIN_ID)
   const evmToken = await CurrencyService.getOrInitEvm(evmBlockchain.id, evmTokenAddress)
   const { escrowAddress, userEscrowAddress } = evmToken
   const serviceAddresses = [evmTokenAddress, escrowAddress, userEscrowAddress, nullAddress]

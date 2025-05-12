@@ -1,6 +1,5 @@
 import { AccountService } from './accountService'
 
-global.getNodeEvmChainId = () => Promise.resolve('2030')
 global.isSubstrateNode = true
 global.isEvmNode = false
 
