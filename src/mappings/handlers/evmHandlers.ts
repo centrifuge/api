@@ -10,9 +10,13 @@ import { CurrencyService } from '../services/currencyService'
 import { BlockchainService, LOCAL_CHAIN_ID } from '../services/blockchainService'
 import { CurrencyBalanceService } from '../services/currencyBalanceService'
 import { TrancheBalanceService } from '../services/trancheBalanceService'
-import { escrows } from '../../config'
+import { escrows, iouCfg } from '../../config'
 import { InvestorPositionService } from '../services/investorPositionService'
 import { getPeriodStart } from '../../helpers/timekeeperService'
+import { MigrationService } from '../services/migrationService'
+
+const nullAddress = '0x0000000000000000000000000000000000000000'
+const LP_TOKENS_MIGRATION_DATE = '2024-08-07'
 
 export const handleEvmDeployTranche = errorHandler(_handleEvmDeployTranche)
 async function _handleEvmDeployTranche(event: DeployTrancheLog): Promise<void> {
@@ -20,8 +24,6 @@ async function _handleEvmDeployTranche(event: DeployTrancheLog): Promise<void> {
   const [_poolId, _trancheId, tokenAddress] = event.args
   const poolManagerAddress = event.address
 
-  const chainId = await getNodeEvmChainId()
-  if (!chainId) throw new Error('Unable to retrieve chainId')
   await BlockchainService.getOrInit(LOCAL_CHAIN_ID)
   const evmBlockchain = await BlockchainService.getOrInit(chainId)
 
@@ -49,20 +51,18 @@ async function _handleEvmDeployTranche(event: DeployTrancheLog): Promise<void> {
 
   await createTrancheTrackerDatasource({ address: tokenAddress })
 }
-const nullAddress = '0x0000000000000000000000000000000000000000'
-const LP_TOKENS_MIGRATION_DATE = '2024-08-07'
 
 export const handleEvmTransfer = errorHandler(_handleEvmTransfer)
 async function _handleEvmTransfer(event: TransferLog): Promise<void> {
   if (!event.args) throw new Error('Missing event arguments')
   const [fromEvmAddress, toEvmAddress, amount] = event.args
-  logger.info(`Transfer ${fromEvmAddress}-${toEvmAddress} of ${amount.toString()} at block: ${event.blockNumber}`)
+  logger.info(
+    `Tranche token transfer ${fromEvmAddress}-${toEvmAddress} of ${amount.toString()} at block: ${event.blockNumber}`
+  )
 
   const timestamp = new Date(Number(event.block.timestamp) * 1000)
   const evmTokenAddress = event.address
-  const chainId = await getNodeEvmChainId()
-  if (!chainId) throw new Error('Unable to retrieve chainId')
-  const evmBlockchain = await BlockchainService.getOrInit(chainId)
+  const evmBlockchain = await BlockchainService.getOrInit(LOCAL_CHAIN_ID)
   const evmToken = await CurrencyService.getOrInitEvm(evmBlockchain.id, evmTokenAddress)
   const { escrowAddress, userEscrowAddress } = evmToken
   const serviceAddresses = [evmTokenAddress, escrowAddress, userEscrowAddress, nullAddress]
@@ -173,5 +173,39 @@ async function _handleEvmTransfer(event: TransferLog): Promise<void> {
       }
     }
     await txOut.save()
+  }
+}
+
+export const handleCfgTransfer = errorHandler(_handleCfgTransfer)
+async function _handleCfgTransfer(event: TransferLog): Promise<void> {
+  if (!event.args) throw new Error('Missing event arguments')
+  const [fromEvmAddress, toEvmAddress, _amount] = event.args
+  const receiverAddress = AccountService.evmToSubstrate(toEvmAddress, chainId)
+  const amount = _amount.toBigInt()
+  const timestamp = new Date(Number(event.block.timestamp) * 1000)
+
+  if (fromEvmAddress !== nullAddress) return
+  logger.info(
+    `CFG migration received event for receiver ${receiverAddress} ` +
+      `with amount ${amount.toString()} at block: ${event.blockNumber}`
+  )
+  const receiverAccount = await AccountService.getOrInit(receiverAddress)
+  await MigrationService.received(event.transactionHash, timestamp, receiverAccount.id, amount)
+}
+
+export const handleWcfgTransfer = errorHandler(_handleWcfgTransfer)
+async function _handleWcfgTransfer(event: TransferLog): Promise<void> {
+  if (!event.args) throw new Error('Missing event arguments')
+  const [fromEvmAddress, toEvmAddress, _amount] = event.args
+  const senderAddress = AccountService.evmToSubstrate(fromEvmAddress, chainId)
+  const amount = _amount.toBigInt()
+  const timestamp = new Date(Number(event.block.timestamp) * 1000)
+  if (toEvmAddress === iouCfg[chainId as keyof typeof iouCfg] && fromEvmAddress !== nullAddress) {
+    logger.info(
+      `wCFG migration sent event for ${senderAddress} to ${senderAddress} ` +
+        `with amount ${amount.toString()} at block: ${event.blockNumber} and timestamp: ${timestamp}`
+    )
+    const senderAccount = await AccountService.getOrInit(senderAddress)
+    await MigrationService.sent(event.transactionHash, timestamp, senderAccount.id, amount, senderAddress)
   }
 }

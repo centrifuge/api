@@ -393,7 +393,7 @@ type OracleTransaction @entity {
 
 type Account @entity {
   id: ID!
-  chain: Blockchain!
+  chain: Blockchain! @index
   evmAddress: String @index
 
   pureProxies: [PureProxy] @derivedFrom(field: "account")
@@ -404,6 +404,9 @@ type Account @entity {
   outstandingOrders: [OutstandingOrder] @derivedFrom(field: "account")
   trancheBalances: [TrancheBalance] @derivedFrom(field: "account")
   currencyBalances: [CurrencyBalance] @derivedFrom(field: "account")
+
+  sentMigrations: [MigrationPair] @derivedFrom(field: "fromAccount")
+  receivedMigrations: [MigrationPair] @derivedFrom(field: "toAccount")
 }
 
 type TrancheBalance @entity {
@@ -704,4 +707,29 @@ type Attestation @entity {
   account: Account! @index
 
   data: String
+}
+
+type MigrationPair @entity {
+  id: ID! #fromAccountId-toAccountId
+  fromAccount: Account! @index
+  toAccount: Account! @index
+  sentMigrations: [SentMigration] @derivedFrom(field: "migrationPair")
+  receivedMigrations: [ReceivedMigration] @derivedFrom(field: "migrationPair")
+}
+
+type SentMigration @entity {
+  id: ID! #sourceTxHash
+  sentAt: Date!
+  sentAmount: BigInt! @index
+  fromAccount: Account! @index
+  toAccount: Account! @index
+  migrationPair: MigrationPair!
+}
+
+type ReceivedMigration @entity {
+  id: ID! #destinationTxHash
+  receivedAt: Date!
+  receivedAmount: BigInt! @index
+  toAccount: Account! @index
+  migrationPair: MigrationPair
 }

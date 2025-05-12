@@ -273,7 +273,7 @@ export const tinlakePools = [
     assessor: [{ address: '0x95bC79d2Aa5147108C285d71CFfB842B7A781a96' }],
     seniorInterestRate: '1000000001585489599188229325',
   },
-]
+] as const
 
 export const escrows = {
   // PoolManager Contract Address: Escrow Address
@@ -282,4 +282,9 @@ export const escrows = {
   '0x5c8657b827a138D52a4e3f03683A28B1FaD86893': '0x1AB6cD0c08120215E241a6108ae7458c995E1694', //PoolManagerV1 (SEPOLIA)
   '0x7f192F34499DdB2bE06c4754CFf2a21c4B056994': '0x0000000005F458Fd6ba9EEb5f365D83b7dA913dD', //PoolManagerV2 (BASE)
   '0xa3Ce97352C1469884EEF3547Ec9362329FE78Cf0': '0x9EDf9FC14DDBEE68CE1a69827b09794367180717', //PoolManager V2 (CELO)
-}
+} as const
+
+export const iouCfg = {
+  '1': '0x000000000000000000000000000000000000AA',
+  '11155111': '0xDD1D785F26e547c72CAe501081Deb61a56288204',
+} as const

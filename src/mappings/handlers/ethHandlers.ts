@@ -59,11 +59,11 @@ async function _handleEthBlock(block: EthereumBlock): Promise<void> {
     if (blockNumber < tinlakePool.startBlock) continue
     logger.info(`Preparing pool update calls for pool ${tinlakePool.id}`)
     const pool = await PoolService.getOrSeed(tinlakePool.id, false, false, blockchain.id)
-    const latestNavFeed = getLatestContract(tinlakePool.navFeed, blockNumber)
-    const latestReserve = getLatestContract(tinlakePool.reserve, blockNumber)
-    const latestAssessor = getLatestContract(tinlakePool.assessor, blockNumber)
-    const latestShelf = getLatestContract(tinlakePool.shelf, blockNumber)
-    const latestPile = getLatestContract(tinlakePool.pile, blockNumber)
+    const latestNavFeed = getLatestContract([...tinlakePool.navFeed], blockNumber)
+    const latestReserve = getLatestContract([...tinlakePool.reserve], blockNumber)
+    const latestAssessor = getLatestContract([...tinlakePool.assessor], blockNumber)
+    const latestShelf = getLatestContract([...tinlakePool.shelf], blockNumber)
+    const latestPile = getLatestContract([...tinlakePool.pile], blockNumber)
     const isClosedPool = pool.id === ALT_1_POOL_ID && blockNumber > ALT_1_END_BLOCK
 
     // initialize new pool
@@ -461,7 +461,7 @@ type ProcessedPools = Record<
   PoolService['id'],
   {
     pool: PoolService
-    tinlakePool: (typeof tinlakePools)[0]
+    tinlakePool: (typeof tinlakePools)[number]
     latestNavFeed?: ContractArray
     latestReserve?: ContractArray
     latestAssessor?: ContractArray

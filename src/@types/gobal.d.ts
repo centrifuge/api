@@ -11,7 +11,6 @@ export type ApiAt = ApiDecoration<'promise'> & {
 declare global {
   const api: ApiAt & Provider
   const unsafeApi: ApiPromise | undefined
-  function getNodeEvmChainId(): Promise<string | undefined>
   var isSubstrateNode: boolean
   var isEvmNode: boolean
 }
