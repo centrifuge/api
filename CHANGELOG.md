@@ -1,5 +1,12 @@
 # Changelog
 
+## [2.4.0](https://github.com/centrifuge/api/compare/v2.3.1...v2.4.0) (2025-05-12)
+
+
+### Features
+
+* cfg token migration indexing ([#286](https://github.com/centrifuge/api/issues/286)) ([d21951e](https://github.com/centrifuge/api/commit/d21951e239855527f8590e1b7e7981ea3e474992))
+
 ## [2.3.1](https://github.com/centrifuge/api/compare/v2.3.0...v2.3.1) (2025-05-02)
 
 
