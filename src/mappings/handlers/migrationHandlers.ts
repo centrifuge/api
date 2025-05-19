@@ -3,21 +3,25 @@ import { CfgMigrationInitiatedEvent } from '../../helpers/types'
 import { SubstrateEvent } from '@subql/types'
 import { AccountService } from '../services/accountService'
 import { MigrationService } from '../services/migrationService'
+import { nullAddress } from './evmHandlers'
 
 export const handleCfgMigrationInitiated = errorHandler(_handleCfgMigrationInitiated)
 async function _handleCfgMigrationInitiated(event: SubstrateEvent<CfgMigrationInitiatedEvent>) {
-  const [sender, receiver, _amount] = event.event.data
+  const [_sender, _receiver, _amount] = event.event.data
+  const sender = _sender.toHex()
+  const receiver = _receiver.toHex().toLowerCase()
   const cfgTokenChainId =
     chainId === '0xb3db41421702df9a7fcac62b53ffeac85f7853cc4e689e0b93aeb3db18c09d82' ? '1' : '11155111'
-  const receiverAddress = AccountService.evmToSubstrate(receiver.toHex(), cfgTokenChainId)
+  const receiverAddress = AccountService.evmToSubstrate(receiver, cfgTokenChainId)
   const amount = _amount.toBigInt()
 
+  if (receiver === nullAddress) return
   logger.info(
-    `CFG migration initiated event from ${sender.toHex()}` +
+    `CFG migration initiated event from ${sender}` +
       `to ${receiverAddress} with amount ${amount.toString(10)} at block: ${event.block.block.header.number.toString()}`
   )
 
-  const senderAccount = await AccountService.getOrInit(sender.toHex())
+  const senderAccount = await AccountService.getOrInit(sender)
   const receiverAccount = await AccountService.getOrInit(receiverAddress)
 
   await MigrationService.sent(

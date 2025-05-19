@@ -732,4 +732,5 @@ type ReceivedMigration @entity {
   receivedAmount: BigInt! @index
   toAccount: Account! @index
   migrationPair: MigrationPair
+  sentMigration: SentMigration
 }

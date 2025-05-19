@@ -15,14 +15,15 @@ import { InvestorPositionService } from '../services/investorPositionService'
 import { getPeriodStart } from '../../helpers/timekeeperService'
 import { MigrationService } from '../services/migrationService'
 
-const nullAddress = '0x0000000000000000000000000000000000000000'
+export const nullAddress = '0x0000000000000000000000000000000000000000'
 const LP_TOKENS_MIGRATION_DATE = '2024-08-07'
 
 export const handleEvmDeployTranche = errorHandler(_handleEvmDeployTranche)
 async function _handleEvmDeployTranche(event: DeployTrancheLog): Promise<void> {
   if (!event.args) throw new Error('Missing event arguments')
-  const [_poolId, _trancheId, tokenAddress] = event.args
-  const poolManagerAddress = event.address
+  const [_poolId, _trancheId, _tokenAddress] = event.args
+  const poolManagerAddress = event.address.toLowerCase()
+  const tokenAddress = _tokenAddress.toLowerCase()
 
   await BlockchainService.getOrInit(LOCAL_CHAIN_ID)
   const evmBlockchain = await BlockchainService.getOrInit(chainId)
@@ -55,7 +56,10 @@ async function _handleEvmDeployTranche(event: DeployTrancheLog): Promise<void> {
 export const handleEvmTransfer = errorHandler(_handleEvmTransfer)
 async function _handleEvmTransfer(event: TransferLog): Promise<void> {
   if (!event.args) throw new Error('Missing event arguments')
-  const [fromEvmAddress, toEvmAddress, amount] = event.args
+  const [_fromEvmAddress, _toEvmAddress, _amount] = event.args
+  const fromEvmAddress = _fromEvmAddress.toLowerCase()
+  const toEvmAddress = _toEvmAddress.toLowerCase()
+  const amount = _amount.toBigInt()
   logger.info(
     `Tranche token transfer ${fromEvmAddress}-${toEvmAddress} of ${amount.toString()} at block: ${event.blockNumber}`
   )
@@ -84,7 +88,7 @@ async function _handleEvmTransfer(event: TransferLog): Promise<void> {
     trancheId: trancheId,
     hash: event.transactionHash,
     timestamp: timestamp,
-    amount: amount.toBigInt(),
+    amount: amount,
     price: tranche.snapshot?.tokenPrice,
   }
 
@@ -106,13 +110,13 @@ async function _handleEvmTransfer(event: TransferLog): Promise<void> {
   // Handle Currency Balance Updates
   if (isToUserAddress) {
     const toBalance = await CurrencyBalanceService.getOrInit(toAddress!, evmToken.id)
-    await toBalance.credit(amount.toBigInt())
+    await toBalance.credit(amount)
     await toBalance.save()
   }
 
   if (isFromUserAddress) {
     const fromBalance = await CurrencyBalanceService.getOrInit(fromAddress!, evmToken.id)
-    await fromBalance.debit(amount.toBigInt())
+    await fromBalance.debit(amount)
     await fromBalance.save()
   }
 
@@ -179,7 +183,9 @@ async function _handleEvmTransfer(event: TransferLog): Promise<void> {
 export const handleCfgTransfer = errorHandler(_handleCfgTransfer)
 async function _handleCfgTransfer(event: TransferLog): Promise<void> {
   if (!event.args) throw new Error('Missing event arguments')
-  const [fromEvmAddress, toEvmAddress, _amount] = event.args
+  const [_fromEvmAddress, _toEvmAddress, _amount] = event.args
+  const fromEvmAddress = _fromEvmAddress.toLowerCase()
+  const toEvmAddress = _toEvmAddress.toLowerCase()
   const receiverAddress = AccountService.evmToSubstrate(toEvmAddress, chainId)
   const amount = _amount.toBigInt()
   const timestamp = new Date(Number(event.block.timestamp) * 1000)
@@ -196,7 +202,9 @@ async function _handleCfgTransfer(event: TransferLog): Promise<void> {
 export const handleWcfgTransfer = errorHandler(_handleWcfgTransfer)
 async function _handleWcfgTransfer(event: TransferLog): Promise<void> {
   if (!event.args) throw new Error('Missing event arguments')
-  const [fromEvmAddress, toEvmAddress, _amount] = event.args
+  const [_fromEvmAddress, _toEvmAddress, _amount] = event.args
+  const fromEvmAddress = _fromEvmAddress.toLowerCase()
+  const toEvmAddress = _toEvmAddress.toLowerCase()
   const senderAddress = AccountService.evmToSubstrate(fromEvmAddress, chainId)
   const amount = _amount.toBigInt()
   const timestamp = new Date(Number(event.block.timestamp) * 1000)

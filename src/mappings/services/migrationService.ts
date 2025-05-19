@@ -4,9 +4,7 @@ import { ReceivedMigration } from '../../types/models/ReceivedMigration'
 
 export class MigrationService {
   static async getOrInit(fromAccountId: string, toAccountId: string) {
-    let migrationPair = await MigrationPair.get(
-      `${fromAccountId}-${toAccountId}`
-    )
+    let migrationPair = await MigrationPair.get(`${fromAccountId}-${toAccountId}`)
     if (!migrationPair) {
       migrationPair = new MigrationPair(`${fromAccountId}-${toAccountId}`, fromAccountId, toAccountId)
       await migrationPair.save()
@@ -34,19 +32,26 @@ export class MigrationService {
     )
 
     // check if receivedMigration exists and reconcile
-    const receivedMigration = (
-      await ReceivedMigration.getByFields(
-        [
-          ['toAccountId', '=', toAccountId],
-          ['receivedAmount', '=', sentAmount],
-        ],
-        { limit: 1 }
-      )
-    ).pop()
+    const receivedMigrations = await ReceivedMigration.getByFields(
+      [
+        ['toAccountId', '=', toAccountId],
+        ['receivedAmount', '=', sentAmount],
+      ],
+      { limit: 100 }
+    )
+
+    if (receivedMigrations.length > 1)
+      receivedMigrations.sort((a, b) => a.receivedAt.valueOf() - b.receivedAt.valueOf())
+
+    const receivedMigration = receivedMigrations.find((r) => r.receivedAt.valueOf() > timestamp.valueOf())
+
     if (receivedMigration) {
-      logger.info(`Migration reconciled! linking to pair ${migrationPair.id}`)
+      logger.info(`Migration reconciled! linking to pair ${migrationPair.id} and sent migration ${sentMigration.id}`)
       receivedMigration.migrationPairId = migrationPair.id
+      receivedMigration.sentMigrationId = sentMigration.id
       await receivedMigration.save()
+    } else {
+      logger.info(`Unable to reconcile yet! No received migration found for sent migration ${sentMigration.id}`)
     }
     await sentMigration.save()
     return
@@ -59,23 +64,28 @@ export class MigrationService {
 
     const receivedMigration = new ReceivedMigration(txHash, timestamp, receivedAmount, toAccountId)
 
-    const sentMigration = (
-      await SentMigration.getByFields(
-        [
-          ['fromAccountId', '=', toAccountId],
-          ['sentAmount', '=', receivedAmount],
-        ],
-        { limit: 1 }
-      )
-    ).pop()
+    const sentMigrations = await SentMigration.getByFields(
+      [
+        ['toAccountId', '=', toAccountId],
+        ['sentAmount', '=', receivedAmount],
+      ],
+      { limit: 100 }
+    )
 
+    if (sentMigrations.length > 1) sentMigrations.sort((a, b) => a.sentAt.valueOf() - b.sentAt.valueOf())
+    const sentMigration = sentMigrations.find((s) => s.sentAt.valueOf() <= timestamp.valueOf())
     if (!sentMigration) {
+      logger.info(`Unable to reconcile yet! No sent migration found for received migration ${receivedMigration.id}`)
       await receivedMigration.save()
       return
     }
 
-    logger.info(`Migration reconciled! linking to pair ${sentMigration.migrationPairId}`)
+    logger.info(
+      `Migration reconciled! linking to pair ${sentMigration.migrationPairId} ` +
+        `and received migration ${receivedMigration.id}`
+    )
     receivedMigration.migrationPairId = sentMigration.migrationPairId
+    receivedMigration.sentMigrationId = sentMigration.id
     await receivedMigration.save()
     return
   }
