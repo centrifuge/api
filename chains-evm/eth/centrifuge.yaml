@@ -11,14 +11,38 @@ dataSources:
     startBlock: 20432390
     options:
       address: '0x91808B5E2F6d7483D41A681034D7c9DbB64B9E29'
-  - kind: ethereum/Runtime #CFG Token
-    startBlock: 22166560 # Apr 15 2025
+  - kind: ethereum/Runtime  #CFG Token
+    startBlock: 22166560 # Mar 31 2025
+    assets:
+      erc20:
+        file: './abi/erc20.abi.json'
     options:
-      address: '0xcccCCCcCCC33D538DBC2EE4fEab0a7A1FF4e8A94'
-  - kind: ethereum/Runtime #wCFG Token
-    startBlock: 22166560 # Apr 15 2025
+          abi: erc20
+          address: '0xcccCCCcCCC33D538DBC2EE4fEab0a7A1FF4e8A94'
+    mapping:
+      file: './dist/index.js'
+      handlers:
+        - handler: handleCfgTransfer
+          kind: ethereum/LogHandler
+          filter:
+            topics:
+              - Transfer(address indexed from, address indexed to, uint256 value)
+  - kind: ethereum/Runtime  #wCFG Token
+    startBlock: 22166560 # Mar 31 2025
     options:
       address: '0xc221b7e65ffc80de234bbb6667abdd46593d34f0'
+      abi: erc20
+    assets:
+      erc20:
+        file: './abi/erc20.abi.json'
+    mapping:
+      file: './dist/index.js'
+      handlers:
+        - handler: handleWcfgTransfer
+          kind: ethereum/LogHandler
+          filter:
+            topics:
+              - Transfer(address indexed from, address indexed to, uint256 value)
   - kind: ethereum/Runtime #Tinlake
     startBlock: 11063000
     options:

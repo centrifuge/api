@@ -285,6 +285,6 @@ export const escrows = {
 } as const
 
 export const iouCfg = {
-  '1': '0x000000000000000000000000000000000000AA'.toLowerCase(),
-  '11155111': '0xDD1D785F26e547c72CAe501081Deb61a56288204'.toLowerCase(),
+  '1': '0xACF3c07BeBd65d5f7d86bc0bc716026A0C523069',
+  '11155111': '0xDD1D785F26e547c72CAe501081Deb61a56288204',
 } as const

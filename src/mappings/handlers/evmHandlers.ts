@@ -22,9 +22,8 @@ export const handleEvmDeployTranche = errorHandler(_handleEvmDeployTranche)
 async function _handleEvmDeployTranche(event: DeployTrancheLog): Promise<void> {
   if (!event.args) throw new Error('Missing event arguments')
   const [_poolId, _trancheId, _tokenAddress] = event.args
-  const poolManagerAddress = event.address.toLowerCase()
-  const tokenAddress = _tokenAddress.toLowerCase()
-
+  const poolManagerAddress = event.address
+  const tokenAddress = _tokenAddress
   await BlockchainService.getOrInit(LOCAL_CHAIN_ID)
   const evmBlockchain = await BlockchainService.getOrInit(chainId)
 
@@ -57,8 +56,8 @@ export const handleEvmTransfer = errorHandler(_handleEvmTransfer)
 async function _handleEvmTransfer(event: TransferLog): Promise<void> {
   if (!event.args) throw new Error('Missing event arguments')
   const [_fromEvmAddress, _toEvmAddress, _amount] = event.args
-  const fromEvmAddress = _fromEvmAddress.toLowerCase()
-  const toEvmAddress = _toEvmAddress.toLowerCase()
+  const fromEvmAddress = _fromEvmAddress
+  const toEvmAddress = _toEvmAddress
   const amount = _amount.toBigInt()
   logger.info(
     `Tranche token transfer ${fromEvmAddress}-${toEvmAddress} of ${amount.toString()} at block: ${event.blockNumber}`
@@ -184,8 +183,8 @@ export const handleCfgTransfer = errorHandler(_handleCfgTransfer)
 async function _handleCfgTransfer(event: TransferLog): Promise<void> {
   if (!event.args) throw new Error('Missing event arguments')
   const [_fromEvmAddress, _toEvmAddress, _amount] = event.args
-  const fromEvmAddress = _fromEvmAddress.toLowerCase()
-  const toEvmAddress = _toEvmAddress.toLowerCase()
+  const fromEvmAddress = _fromEvmAddress
+  const toEvmAddress = _toEvmAddress
   const receiverAddress = AccountService.evmToSubstrate(toEvmAddress, chainId)
   const amount = _amount.toBigInt()
   const timestamp = new Date(Number(event.block.timestamp) * 1000)
@@ -203,8 +202,8 @@ export const handleWcfgTransfer = errorHandler(_handleWcfgTransfer)
 async function _handleWcfgTransfer(event: TransferLog): Promise<void> {
   if (!event.args) throw new Error('Missing event arguments')
   const [_fromEvmAddress, _toEvmAddress, _amount] = event.args
-  const fromEvmAddress = _fromEvmAddress.toLowerCase()
-  const toEvmAddress = _toEvmAddress.toLowerCase()
+  const fromEvmAddress = _fromEvmAddress
+  const toEvmAddress = _toEvmAddress
   const senderAddress = AccountService.evmToSubstrate(fromEvmAddress, chainId)
   const amount = _amount.toBigInt()
   const timestamp = new Date(Number(event.block.timestamp) * 1000)

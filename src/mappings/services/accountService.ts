@@ -1,7 +1,7 @@
 import { Account } from '../../types/models/Account'
 import { BlockchainService, LOCAL_CHAIN_ID } from './blockchainService'
 import { u64 } from '@polkadot/types'
-
+import { utils } from 'ethers'
 const EVM_SUFFIX = '45564d00'
 
 export class AccountService extends Account {
@@ -10,12 +10,12 @@ export class AccountService extends Account {
       const chainId = this.readEvmChainId(address)
       logger.info(`Initialising new account: ${address} as foreign for chainId: ${chainId}`)
       const account = new this(address, chainId)
-      account.evmAddress = address.substring(0, 42)
+      account.evmAddress = utils.getAddress(address.substring(0, 42))
       return account
     } else {
       logger.info(`Initialising new account: ${address} on local chainId: ${LOCAL_CHAIN_ID}`)
       const account = new this(address, LOCAL_CHAIN_ID)
-      if (this.isEvm(address)) account.evmAddress = address.substring(0, 42)
+      if (this.isEvm(address)) account.evmAddress = utils.getAddress(address.substring(0, 42))
       return account
     }
   }

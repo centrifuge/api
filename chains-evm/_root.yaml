@@ -45,34 +45,6 @@ dataSources:
           filter:
             topics:
               - DeployTranche(uint64 indexed poolId, bytes16 indexed trancheId, address indexed token)
-  - kind: ethereum/Runtime  #CFG Token
-    options:
-      abi: erc20
-    assets:
-      erc20:
-        file: './abi/erc20.abi.json'
-    mapping:
-      file: './dist/index.js'
-      handlers:
-        - handler: handleCfgTransfer
-          kind: ethereum/LogHandler
-          filter:
-            topics:
-              - Transfer(address indexed from, address indexed to, uint256 value)
-  - kind: ethereum/Runtime  #CFG IOU Token
-    options:
-      abi: erc20
-    assets:
-      erc20:
-        file: './abi/erc20.abi.json'
-    mapping:
-      file: './dist/index.js'
-      handlers:
-        - handler: handleWcfgTransfer
-          kind: ethereum/LogHandler
-          filter:
-            topics:
-              - Transfer(address indexed from, address indexed to, uint256 value)
 templates:
   - name: TrancheTracker
     kind: ethereum/Runtime
