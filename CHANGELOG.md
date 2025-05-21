@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.4.0](https://github.com/centrifuge/api/compare/v2.3.1...v2.4.0) (2025-05-21)
+
+
+### Features
+
+* cfg token migration indexing ([#286](https://github.com/centrifuge/api/issues/286)) ([d21951e](https://github.com/centrifuge/api/commit/d21951e239855527f8590e1b7e7981ea3e474992))
+
+
+### Bug Fixes
+
+* migration reconciliation ([27ec44e](https://github.com/centrifuge/api/commit/27ec44e83df8e5f49f5bdd545c688d84f065d870))
+* project files ([0338d1a](https://github.com/centrifuge/api/commit/0338d1a707ca37d11e5372dc56656a9e3503b0cd))
+
 ## [2.3.1](https://github.com/centrifuge/api/compare/v2.3.0...v2.3.1) (2025-05-02)
 
 
